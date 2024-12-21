@@ -6,17 +6,23 @@
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 18:17:59 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/21 18:18:03 by kchikwam         ###   ########.fr       */
+/*   Updated: 2024/12/21 17:54:40 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf/ft_printf.h"
+#include "../ft_printf.h"
+#include <signal.h>
+
+typedef struct s_msg
+{
+	char	c;
+	int		i;
+}	t_msg;
+
+t_msg g_msg = {0, 0};
 
 void	bit_handler(int bit)
 {
-	int	i;
-
-	i = 0;
 	g_msg.c += ((bit & 1) << g_msg.i);
 	g_msg.i++;
 	if (g_msg.i == 7)
