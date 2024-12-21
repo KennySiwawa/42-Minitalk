@@ -6,12 +6,13 @@
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 18:17:59 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/21 17:54:40 by kchikwam         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:12:54 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_printf.h"
+#include "ft_printf/ft_printf.h"
 #include <signal.h>
+#include <unistd.h>
 
 typedef struct s_msg
 {
