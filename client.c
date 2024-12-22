@@ -6,11 +6,13 @@
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 18:17:19 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/21 18:17:34 by kchikwam         ###   ########.fr       */
+/*   Updated: 2024/12/22 12:35:41 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf/ft_printf.h"
+#include <unistd.h>
+#include <signal.h>
 
 void	send_bit(int pid, char *str, size_t len)
 {
