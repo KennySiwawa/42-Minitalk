@@ -1,40 +1,12 @@
-# SERVER = server
-# CLIENT = client
-
-# CFLAGS = -Wall -Werror -Wextra
-# CC = gcc
-# FLAGS = -Wall -Wextra -Werror -I$(PRINTF)/headers -L$(PRINTF) -lftprintf
-
-# PRINTF = ft_printf
-
-# all:
-# 	@make -s -C $(PRINTF)
-# 	@gcc $(FLAGS) server.c -o $(SERVER)
-# 	@gcc $(FLAGS) client.c -o $(CLIENT)
-# 	@echo "Server And Client Are Ready!"
-
-# clean:
-# 	@make clean -s -C $(PRINTF)
-
-# fclean: clean
-# 	@make fclean -s -C $(PRINTF)
-# 	@rm -f $(SERVER) $(CLIENT)
-# 	@echo "Server and Client Have Been Cleaned Successfully"
-
-# re: fclean all
-
-
-# Target binaries
-SERVER = server
-CLIENT = client
-
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -I$(PRINTF)/headers
-LDFLAGS = -L$(PRINTF) -lftprintf
+CFLAGS = -Wall -Wextra -Werror
 
-# Directory containing ft_printf
-PRINTF = ft_printf
+# Libraries
+LIBFT_DIR = ft_printf/libft
+LIBFT = $(LIBFT_DIR)/libft.a
+FT_PRINTF = ft_printf/libftprintf.a
+INCLUDES = -I $(LIBFT_DIR) -I ft_printf
 
 # Source files
 SRCS_SERVER = server.c
@@ -44,25 +16,37 @@ SRCS_CLIENT = client.c
 OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
 
-# Rules
-all: $(SERVER) $(CLIENT)
+# Targets
+all: client server
 
-$(SERVER): $(OBJS_SERVER)
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+client: $(OBJS_CLIENT) $(LIBFT) $(FT_PRINTF)
+	$(CC) $(CFLAGS) -o client $(OBJS_CLIENT) $(LIBFT) $(FT_PRINTF)
 
-$(CLIENT): $(OBJS_CLIENT)
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+server: $(OBJS_SERVER) $(LIBFT) $(FT_PRINTF)
+	$(CC) $(CFLAGS) -o server $(OBJS_SERVER) $(LIBFT) $(FT_PRINTF)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+$(FT_PRINTF):
+	$(MAKE) -C ft_printf
+
+client.o: client.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c client.c -o client.o
+
+server.o: server.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c server.c -o server.o
 
 clean:
-	@make clean -s -C $(PRINTF)
-	@rm -f $(OBJS_SERVER) $(OBJS_CLIENT)
+	rm -f $(OBJS_CLIENT) $(OBJS_SERVER)
+	$(MAKE) -C $(LIBFT_DIR) clean
+	$(MAKE) -C ft_printf clean
 
 fclean: clean
-	@make fclean -s -C $(PRINTF)
-	@rm -f $(SERVER) $(CLIENT)
-	@echo "Server and Client Have Been Cleaned Successfully"
+	rm -f client server
+	$(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C ft_printf fclean
 
 re: fclean all
+
+.PHONY: all clean fclean re
