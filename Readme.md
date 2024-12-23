@@ -14,11 +14,3 @@
     + The communication between your client and your server has to be done only using UNIX signals.
     + You can only use these two signals: SIGUSR1 and SIGUSR2.
 
-### Bonus part
-    
-+ The server acknowledges every message received by sending back a signal to the client.
-
-+ Unicode characters support!
-
-
-
