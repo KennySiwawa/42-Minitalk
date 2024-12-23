@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,69 +5,90 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/21 18:17:19 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/23 12:01:06 by kchikwam         ###   ########.fr       */
+/*   Created: 2024/12/23 20:00:44 by kchikwam          #+#    #+#             */
+/*   Updated: 2024/12/23 19:58:40 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf/ft_printf.h"
-#include "ft_printf/libft/libft.h"
-#include <unistd.h>
-#include <signal.h>
-#include <stdio.h> // Include the standard I/O library for debugging
+#include"minitalk.h"
 
-void send_bit(int pid, char *str, size_t len)
+static int	ft_atoi(char *str)
 {
-    int		shift;
-    size_t	i;
+	int	sign;
+	int	num;
 
-    i = 0;
-    while (i <= len)
-    {
-        shift = 0;
-        while (shift < 8) //changed from 7 to 8
-        {
-            if ((str[i] >> shift) & 1)
-            {
-                if (kill(pid, SIGUSR2) == -1)
-                {
-                    ft_printf("Error sending SIGUSR2\n");
-                    return;
-                }
-				printf("Sending SIGUSR2 for bit 1\n"); // Debug print
-            }
-            else
-            {
-                if (kill(pid, SIGUSR1) == -1)
-                {
-                    ft_printf("Error sending SIGUSR1\n");
-                    return;
-                }
-				printf("Sending SIGUSR1 for bit 0\n"); // Debug print
-            }
-            shift++;
-            usleep(300);
-        }
-        i++;
-    }
+	sign = 1;
+	num = 0;
+	while (*str == 32 || (*str >= 9 && *str <= 13))
+		str ++;
+	if (*str == '-')
+		sign *= -1;
+	if (*str == '-' || *str == '+')
+		str++;
+	while (*str >= '0' && *str <= '9')
+	{
+		num = (num * 10) + (*str - '0');
+		str++;
+	}
+	return (num * sign);
 }
 
-int main(int argc, char **argv)
+static void	ft_sender_bin(int pid, char c)
 {
-    int		pid;
-    char	*str;
+	int	bit;
+	int	n;
 
-    if (argc == 3)
-    {
-        pid = ft_atoi(argv[1]);
-        str = argv[2];
-        send_bit(pid, str, ft_strlen(str));
-        // Send the null terminator
-        send_bit(pid, "\0", 1);
-    }
-    else
-    {
-        ft_printf("\nUsage: %s <PID> <message>\n", argv[0]);
-    }
-    return 0;
+	bit = 0;
+	while (bit < 8)
+	{
+		if (c & 128)
+			n = kill(pid, SIGUSR2);
+		else
+			n = kill(pid, SIGUSR1);
+		if (n == -1)
+		{
+			ft_printf("[ PID ] : bad process ID");
+			exit(EXIT_FAILURE);
+		}
+		c = c << 1;
+		bit ++;
+		usleep(700);
+	}
+}
+
+static void	ft_sender_char(int pid, char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		ft_sender_bin(pid, str[i]);
+		i++;
+	}
+}
+
+int	main(int argc, char **argv)
+{
+	int	pid;
+	int	i;
+
+	i = 0;
+	if (argc != 3)
+	{
+		ft_printf("[ INVALID ARGUMENTS ! ] : [ PID ] [ STRING ] \n");
+		exit(EXIT_FAILURE);
+	}
+	while (argv[1][i])
+	{
+		if (!(argv[1][i] >= '0' && argv[1][i] <= '9'))
+		{
+			ft_printf("Invalid PID : [ PID must contain only numbers ! ]");
+			exit(EXIT_FAILURE);
+		}
+		i ++;
+	}
+	pid = ft_atoi(argv[1]);
+	ft_sender_char(pid, argv[2]);
+	return (0);
 }

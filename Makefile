@@ -1,52 +1,40 @@
-# Compiler and flags
+# Variables : Compilation tools
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror
 
-# Libraries
-LIBFT_DIR = ft_printf/libft
-LIBFT = $(LIBFT_DIR)/libft.a
-FT_PRINTF = ft_printf/libftprintf.a
-INCLUDES = -I $(LIBFT_DIR) -I ft_printf
+#Variables : libraries
+LIB = minitalk.h
 
-# Source files
-SRCS_SERVER = server.c
-SRCS_CLIENT = client.c
+#variables : Sources files 
+SERVER = server.c 
+CLIENT = client.c
+LIBFTPRINTF = ft_printf/libftprintf.a
 
-# Object files
-OBJS_SERVER = $(SRCS_SERVER:.c=.o)
-OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
+#Variables : Objects files 
+OSERVER = $(SERVER:.c=.o)
+OCLIENT = $(CLIENT:.c=.o)
 
-# Targets
-all: client server
+#Variables : Cleaning rule
+OBJS = $(OSERVER) $(OCLIENT)
+EXEC = server client
 
-client: $(OBJS_CLIENT) $(LIBFT) $(FT_PRINTF)
-	$(CC) $(CFLAGS) -o client $(OBJS_CLIENT) $(LIBFT) $(FT_PRINTF)
+#Mandatory part
+NAME = minitalk
+all : $(NAME)
 
-server: $(OBJS_SERVER) $(LIBFT) $(FT_PRINTF)
-	$(CC) $(CFLAGS) -o server $(OBJS_SERVER) $(LIBFT) $(FT_PRINTF)
+$(NAME)  : $(OSERVER) $(OCLIENT) $(LIB)
+	@make -C ft_printf
+	@$(CC) $(FLAGS) $(SERVER) $(LIBFTPRINTF) -o server
+	@$(CC) $(FLAGS) $(CLIENT) $(LIBFTPRINTF) -o client
 
-$(LIBFT):
-	$(MAKE) -C $(LIBFT_DIR)
+#Clean objects (Mandatory)
+clean :
+	@make fclean -C ft_printf
+	@rm -rf $(OBJS)
 
-$(FT_PRINTF):
-	$(MAKE) -C ft_printf
+#Clean objects and executable files (Mandatory)
+fclean : clean
+	@rm -rf $(EXEC)
 
-client.o: client.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c client.c -o client.o
-
-server.o: server.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c server.c -o server.o
-
-clean:
-	rm -f $(OBJS_CLIENT) $(OBJS_SERVER)
-	$(MAKE) -C $(LIBFT_DIR) clean
-	$(MAKE) -C ft_printf clean
-
-fclean: clean
-	rm -f client server
-	$(MAKE) -C $(LIBFT_DIR) fclean
-	$(MAKE) -C ft_printf fclean
-
-re: fclean all
-
-.PHONY: all clean fclean re
+#Recompile the mandatory part
+re : fclean all

@@ -5,63 +5,50 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/21 18:17:59 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/23 14:09:44 by kchikwam         ###   ########.fr       */
+/*   Created: 2024/12/23 20:02:07 by kchikwam          #+#    #+#             */
+/*   Updated: 2024/12/23 20:56:32 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf/ft_printf.h"
-#include "ft_printf/libft/libft.h"
-#include <signal.h>
-#include <unistd.h>
-#include <stdio.h> // Include the standard I/O library for debugging
+#include "minitalk.h"
 
-typedef struct s_msg
+static void	sig_handler(int sig, siginfo_t *info, void *context)
 {
-    char	c;
-    int		i;
-}	t_msg;
+	static int	client_pid;
+	static int	bit;
+	static int	c;
 
-t_msg g_msg = {0, 0};
-volatile sig_atomic_t g_running = 1;
-
-void	bit_handler(int bit)
-{
-    printf("Signal received: %d\n", bit); // Debug print
-    g_msg.c += ((bit & 1) << g_msg.i);
-    g_msg.i++;
-    printf("Current char: %c, bit position: %d\n", g_msg.c, g_msg.i); // Debug print
-    if (g_msg.i == 8) //Adjust to 8 bits for a full character
-    {
-        ft_printf("%c", g_msg.c);
-        if (!g_msg.c)
-            ft_printf("\n");
-        g_msg.c = 0;
-        g_msg.i = 0;
-    }
-}
-
-void	sigint_handler(int signum)
-{
-    (void)signum;
-    printf("SIGINT received. Shutting down...\n"); // Debug print
-    g_running = 0;
+	(void)context;
+	if ((*info).si_pid != client_pid)
+	{
+		c = 0;
+		bit = 0;
+		client_pid = (*info).si_pid;
+	}
+	c <<= 1;
+	c = c | (sig == SIGUSR2);
+	bit ++;
+	if (bit == 8)
+	{
+		ft_printf("%c", c);
+		c = 0;
+		bit = 0;
+	}
 }
 
 int	main(void)
 {
-    ft_printf("Welcome To Pasquale's Server!\n");
-    ft_printf("My Server PID is: %d\n", getpid());
+	int					pid;
+	struct sigaction	action;
 
-    signal(SIGUSR2, bit_handler);
-    signal(SIGUSR1, bit_handler);
-    signal(SIGINT, sigint_handler);
-
-    while (g_running)
-    {
-        pause();
-    }
-
-    ft_printf("Server shutting down...\n");
-    return (0);
+	pid = getpid();
+	action.sa_sigaction = &sig_handler;
+	ft_printf("====> Here is the process ID : [ %d ]\n", pid);
+	while (1)
+	{
+		sigaction(SIGUSR1, &action, NULL);
+		sigaction(SIGUSR2, &action, NULL);
+		pause();
+	}
+	exit(EXIT_FAILURE);
 }
