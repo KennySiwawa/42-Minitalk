@@ -6,7 +6,7 @@
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 18:17:19 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/22 14:33:47 by kchikwam         ###   ########.fr       */
+/*   Updated: 2024/12/23 12:01:06 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	send_bit(int pid, char *str, size_t len)
 	while (i <= len)
 	{
 		shift = 0;
-		while (shift < 7)
+		while (shift < 8) //changed from 7 to 8
 		{
 			if ((str[i] >> shift) & 1)
 				kill(pid, SIGUSR2);
