@@ -20,26 +20,5 @@
 
 + Unicode characters support!
 
-# knowledge
-### Unix_Signals
-<ul>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md">About Unix_signals </a></li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#sending-signals">Sending signals </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#kill-">Kill() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#signal-handling">Signal handling </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#signal-">Signal() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#sigaction--">Sigaction() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#sigemptyset-">Sigemptyset() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#sigaddset-">Sigaddset() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#getpid-">getpid() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#pause-">pause() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#sleep-">sleep() </a> </li>
-    <li> <a href="https://github.com/ahammout/Minitalk/blob/main/Readme/UNIX_SIGNALS.md#usleep-">usleep() </a> </li>
-</ul>
 
-### Sending & Receiving Bits using UNIX signals
-<ul>
-    <li><a href="https://github.com/ahammout/Minitalk/blob/main/Readme/SENDING_RECEIVING_BITS.md#converting-ascii-to-binary">Converting ascii to binary </a></li>
-    <li><a href="https://github.com/ahammout/Minitalk/blob/main/Readme/SENDING_RECEIVING_BITS.md#converting-binary-to-ascii">Converting binary to ascii </a></li>
-</ul>
 
