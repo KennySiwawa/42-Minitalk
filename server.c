@@ -6,7 +6,7 @@
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 20:02:07 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/23 20:56:32 by kchikwam         ###   ########.fr       */
+/*   Updated: 2024/12/27 13:34:53 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	main(void)
 
 	pid = getpid();
 	action.sa_sigaction = &sig_handler;
-	ft_printf("====> Here is the process ID : [ %d ]\n", pid);
+	ft_printf("====> welcome to Kenny's server, my process ID is: [ %d ]\n", pid);
 	while (1)
 	{
 		sigaction(SIGUSR1, &action, NULL);
