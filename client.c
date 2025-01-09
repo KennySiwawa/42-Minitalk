@@ -5,12 +5,24 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: kchikwam <kchikwam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/23 20:00:44 by kchikwam          #+#    #+#             */
-/*   Updated: 2024/12/23 19:58:40 by kchikwam         ###   ########.fr       */
+/*   Created: 2025/01/09 14:40:48 by kchikwam          #+#    #+#             */
+/*   Updated: 2025/01/09 14:40:51 by kchikwam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"minitalk.h"
+#include "minitalk.h"
+#include <signal.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+static volatile sig_atomic_t g_ack_received = 0;
+
+void sig_ack_handler(int sig)
+{
+	(void)sig;
+	g_ack_received = 1;
+}
 
 static int	ft_atoi(char *str)
 {
@@ -20,7 +32,7 @@ static int	ft_atoi(char *str)
 	sign = 1;
 	num = 0;
 	while (*str == 32 || (*str >= 9 && *str <= 13))
-		str ++;
+		str++;
 	if (*str == '-')
 		sign *= -1;
 	if (*str == '-' || *str == '+')
@@ -33,62 +45,44 @@ static int	ft_atoi(char *str)
 	return (num * sign);
 }
 
-static void	ft_sender_bin(int pid, char c)
+static void ft_send_bit(int pid, int bit)
 {
-	int	bit;
-	int	n;
-
-	bit = 0;
-	while (bit < 8)
+	g_ack_received = 0;
+	if (kill(pid, bit ? SIGUSR2 : SIGUSR1) == -1)
 	{
-		if (c & 128)
-			n = kill(pid, SIGUSR2);
-		else
-			n = kill(pid, SIGUSR1);
-		if (n == -1)
-		{
-			ft_printf("[ PID ] : bad process ID");
-			exit(EXIT_FAILURE);
-		}
-		c = c << 1;
-		bit ++;
-		usleep(700);
-	}
-}
-
-static void	ft_sender_char(int pid, char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		ft_sender_bin(pid, str[i]);
-		i++;
-	}
-}
-
-int	main(int argc, char **argv)
-{
-	int	pid;
-	int	i;
-
-	i = 0;
-	if (argc != 3)
-	{
-		ft_printf("[ INVALID ARGUMENTS ! ] : [ PID ] [ STRING ] \n");
+		perror("[ ERROR ]: Invalid PID");
 		exit(EXIT_FAILURE);
 	}
-	while (argv[1][i])
+	while (!g_ack_received)
+		usleep(100);
+}
+
+static void ft_send_char(int pid, char c)
+{
+	int	bit;
+
+	for (bit = 7; bit >= 0; bit--)
+		ft_send_bit(pid, (c >> bit) & 1);
+}
+
+static void ft_send_message(int pid, char *str)
+{
+	while (*str)
+		ft_send_char(pid, *str++);
+	ft_send_char(pid, '\0'); // Send null terminator
+}
+
+int main(int argc, char **argv)
+{
+	int pid;
+
+	if (argc != 3)
 	{
-		if (!(argv[1][i] >= '0' && argv[1][i] <= '9'))
-		{
-			ft_printf("Invalid PID : [ PID must contain only numbers ! ]");
-			exit(EXIT_FAILURE);
-		}
-		i ++;
+		fprintf(stderr, "[ USAGE ]: %s [ PID ] [ MESSAGE ]\n", argv[0]);
+		exit(EXIT_FAILURE);
 	}
+	signal(SIGUSR1, sig_ack_handler);
 	pid = ft_atoi(argv[1]);
-	ft_sender_char(pid, argv[2]);
+	ft_send_message(pid, argv[2]);
 	return (0);
 }
